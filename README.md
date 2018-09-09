@@ -240,5 +240,18 @@ namespace Controllers
     }
 }
 
-
 ```
+
+# Performance
+
+ASP.NET 4 for .NET Framework runs under IIS (w3wp.exe process) and it's super fast once it's loaded (the IIS loading it's a bit slow).
+
+ASP.NET Core for .NET Framework and .NET Core runs under Kestrel embeded Web Server that could be used without an aditional Web Server however it's not recomend because it's relative new and don't supporte iet many features that a more mature Web Server (like IIS) does.
+
+Comparing a relative big project with AMFCore + ASP.NET + .NET 4.7 + IIS versus converted version for ASP.NET Core + .NET 4.7 or .NET Core 2.1 + Kestrel, the performance it's similar however running ASP.NET Core with a reverse proxy (the recomended scenario for production) with IIS it's 4 to 5 times slower and with Apache it's even worse !
+
+But there is good news:
+https://blogs.msdn.microsoft.com/webdev/2018/02/28/asp-net-core-2-1-0-preview1-improvements-to-iis-hosting
+https://github.com/aspnet/IISIntegration/issues/878
+
+So, using AMFCore with .NET Framework it's a path for migrated to ASP.NET Core latter with the minimum impact when the version 2.2 comes out (on this time writing we are on the 2.1 version).
