@@ -74,6 +74,31 @@ public class MyHttpContext : IHttpContext
         System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
     }
 }
+
+
+```
+
+```csharp
+
+GatewayController.cs (MVC is NOT the only option for .NET Framework but it's the most modern one and the common bond with .NET Core but with a very small change and additional parameter this could be parameterizable and for the sake of simplicity, the controller must be called Gateway but with an additional parameter this could also be parameterizable)
+
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace Controllers
+{
+    public class GatewayController : ApiController
+    {
+        [Route("gateway")]
+        [HttpGet]
+        public HttpResponseMessage Gateway()
+        {
+           return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+    }
+}
+
 ```
 
 ## Example Usage With ASP.NET Core compatible with both .NET Framework and .NET Core
@@ -191,5 +216,29 @@ public class MyHttpContext : IHttpContext
     {
     }
 }
+
+```
+
+```csharp
+
+GatewayController.cs (MVC is the only option for .NET Core and for the sake of simplicity, the controller must be called Gateway but with an additional parameter this could be parameterizable)
+
+using System.Net;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Controllers
+{
+    public class GatewayController : Controller
+    {
+        [Route("gateway")]
+        [HttpGet]
+        public HttpResponseMessage Gateway()
+        {
+           return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+    }
+}
+
 
 ```
