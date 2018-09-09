@@ -242,6 +242,22 @@ namespace Controllers
 
 ```
 
+## Example Usage of AMF Service
+
+```csharp
+
+//on client side you should use "AMF" as RemoteObject destination
+[RemotingService()]
+public class HelloWorldService
+{
+    public SayHello(string name)
+    {
+        return "Hello " + name + " !, Hope you are doing well !!";
+    }
+}
+
+```
+
 # Performance
 
 ASP.NET 4 for .NET Framework runs under IIS (w3wp.exe process) and it's super fast once it's loaded (the IIS loading it's a bit slow).
