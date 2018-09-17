@@ -271,3 +271,9 @@ https://blogs.msdn.microsoft.com/webdev/2018/02/28/asp-net-core-2-1-0-preview1-i
 https://github.com/aspnet/IISIntegration/issues/878
 
 So, using AMFCore with .NET Framework it's a path for migrated to ASP.NET Core latter with the minimum impact when the version 2.2 comes out (on this time writing we are on the 2.1 version).
+
+## License
+
+- This library is MIT licensed
+- Feel free to use it in any way you wish
+- Please contribute improvements back to this repository!
