@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using SolidSoft.AMFCore.Util;
 using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
@@ -58,17 +59,16 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints
 			throw new NotSupportedException();
 		}
 
-		public virtual void Service()
-		{
-		}
+        public virtual Task Service()
+        {
+            return Task.FromResult<object>(null);
+        }
 
-		public virtual IMessage ServiceMessage(IMessage message)
-		{
-			ValidationUtils.ArgumentNotNull(message, "message");
-			IMessage response = null;
-			response = _messageBroker.RouteMessage(message, this);
-			return response;
-		}
+        public virtual Task<IMessage> ServiceMessage(IMessage message)
+        {
+            ValidationUtils.ArgumentNotNull(message, "message");
+            return _messageBroker.RouteMessage(message, this);
+        }
 
 		public virtual bool IsSecure
 		{

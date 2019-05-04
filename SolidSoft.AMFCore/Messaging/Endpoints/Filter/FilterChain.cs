@@ -1,4 +1,6 @@
-﻿namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
+﻿using System.Threading.Tasks;
+
+namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 {
 	/// <summary>
 	/// This type supports the AMFCore infrastructure and is not intended to be used directly from your code.
@@ -16,14 +18,14 @@
 			_filter = filter;
 		}
 
-		public void InvokeFilters(AMFContext context)
-		{
-			IFilter filter = _filter;
-			while(filter != null)
-			{
-				filter.Invoke(context);
-				filter = filter.Next;
-			}
-		}
-	}
+        public async Task InvokeFilters(AMFContext context)
+        {
+            IFilter filter = _filter;
+            while (filter != null)
+            {
+                await filter.Invoke(context);
+                filter = filter.Next;
+            }
+        }
+    }
 }

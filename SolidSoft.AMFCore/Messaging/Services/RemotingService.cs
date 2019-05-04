@@ -1,4 +1,5 @@
-﻿using SolidSoft.AMFCore.Messaging.Config;
+﻿using System.Threading.Tasks;
+using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
 using SolidSoft.AMFCore.Messaging.Services.Remoting;
 
@@ -21,13 +22,14 @@ namespace SolidSoft.AMFCore.Messaging.Services
 			return remotingDestination;
 		}
 
-		public override object ServiceMessage(IMessage message)
+		public override async Task<object> ServiceMessage(IMessage message)
 		{
 			RemotingMessage remotingMessage = message as RemotingMessage;
 			RemotingDestination destination = GetDestination(message) as RemotingDestination;
 			ServiceAdapter adapter = destination.ServiceAdapter;
-			object result = adapter.Invoke(message);
-			return result;
-		}
+            Task<object> result = adapter.Invoke(message);
+            await result;
+            return result.Result;
+        }
 	}
 }

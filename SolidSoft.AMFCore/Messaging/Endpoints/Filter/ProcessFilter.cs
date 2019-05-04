@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections;
 using System.Reflection;
 using SolidSoft.AMFCore.IO;
@@ -25,7 +26,7 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 
 		#region IFilter Members
 
-		public override void Invoke(AMFContext context)
+		public override Task Invoke(AMFContext context)
 		{
 			MessageOutput messageOutput = context.MessageOutput;
 			for(int i = 0; i < context.AMFMessage.BodyCount; i++)
@@ -174,7 +175,9 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 			    }
 				messageOutput.AddBody(responseBody);
 			}
-		}
+
+            return Task.FromResult<object>(null);
+        }
 		#endregion
 
 	}

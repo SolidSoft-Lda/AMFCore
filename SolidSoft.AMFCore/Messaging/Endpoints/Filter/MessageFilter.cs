@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections;
 using System.Security;
 using SolidSoft.AMFCore.IO;
 using SolidSoft.AMFCore.Messaging.Messages;
-using SolidSoft.AMFCore.Context;
 
 namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 {
@@ -21,8 +21,8 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 
 		#region IFilter Members
 
-		public override void Invoke(AMFContext context)
-		{
+        public override async Task Invoke(AMFContext context)
+        {
 			MessageOutput messageOutput = context.MessageOutput;
 			for(int i = 0; i < context.AMFMessage.BodyCount; i++)
 			{
@@ -61,11 +61,12 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
                             if (commandMessage != null && commandMessage.operation == CommandMessage.PollOperation )
                                 commandMessage.SetHeader(CommandMessage.AMFSuppressPollWaitHeader, null);
                         }
-						IMessage resultMessage = _endpoint.ServiceMessage(message);
-						if (resultMessage is ErrorMessage)
-						{
-							ErrorMessage errorMessage = resultMessage as ErrorMessage;
-							responseBody = new ErrorResponseBody(amfBody, message, resultMessage as ErrorMessage);
+                        Task<IMessage> resultMessage = _endpoint.ServiceMessage(message);
+                        await resultMessage;
+                        if (resultMessage.Result is ErrorMessage)
+                        {
+                            ErrorMessage errorMessage = resultMessage.Result as ErrorMessage;
+                            responseBody = new ErrorResponseBody(amfBody, message, resultMessage.Result as ErrorMessage);
                             if (errorMessage.faultCode == ErrorMessage.ClientAuthenticationError)
 							{
 								messageOutput.AddBody(responseBody);
@@ -81,30 +82,30 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 										content = (content as IList)[0];
 									message = content as IMessage;
 
-									//Check for Flex2 messages and handle
-									if (message != null)
-									{
-										responseBody = new ErrorResponseBody(amfBody, message, new SecurityException(errorMessage.faultString));
-										messageOutput.AddBody(responseBody);
-									}
-								}
-								//Leave further processing
-								return;
-							}
-						}
-						else
-						{
-							responseBody = new ResponseBody(amfBody, resultMessage);
-						}
-					}
-					catch(Exception exception)
-					{
-						responseBody = new ErrorResponseBody(amfBody, message, exception);
-					}
-					messageOutput.AddBody(responseBody);
-				}
-			}
-		}
+                                    //Check for Flex2 messages and handle
+                                    if (message != null)
+                                    {
+                                        responseBody = new ErrorResponseBody(amfBody, message, new SecurityException(errorMessage.faultString));
+                                        messageOutput.AddBody(responseBody);
+                                    }
+                                }
+                                //Leave further processing
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            responseBody = new ResponseBody(amfBody, resultMessage.Result);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        responseBody = new ErrorResponseBody(amfBody, message, exception);
+                    }
+                    messageOutput.AddBody(responseBody);
+                }
+            }
+        }
 
 		#endregion
 	}

@@ -6,9 +6,9 @@ namespace SolidSoft.AMFCore.DependencyInjection
     {
         Stream GetInputStream();
         Stream GetOutputStream();
-        void Clear();
+        void Clear(object context);
         string GetContentType();
         void SetContentType(string contentType);
-        void Finish();
+        void Finish(object context);
     }
 }

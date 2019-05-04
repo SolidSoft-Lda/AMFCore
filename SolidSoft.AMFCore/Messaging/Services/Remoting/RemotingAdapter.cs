@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections;
 using System.Reflection;
 using SolidSoft.AMFCore.Invocation;
@@ -17,10 +18,10 @@ namespace SolidSoft.AMFCore.Remoting
 		{
 		}
 
-		public override object Invoke(IMessage message)
+		public override async Task<object> Invoke(IMessage message)
 		{
-			object result = null;
-			RemotingMessage remotingMessage = message as RemotingMessage;
+            Task<object> result = null;
+            RemotingMessage remotingMessage = message as RemotingMessage;
 			string operation = remotingMessage.operation;
             string className = this.DestinationSettings.Properties["source"] as string;
             //This property is provided for backwards compatibility. The best practice, however, is to not expose the underlying source of a 
@@ -67,8 +68,9 @@ namespace SolidSoft.AMFCore.Remoting
 						parameterList.CopyTo(args, 0);
 						TypeHelper.NarrowValues( args, parameterInfos);
 						InvocationHandler invocationHandler = new InvocationHandler(mi);
-						result = invocationHandler.Invoke(instance, args);
-					}
+                        result = (Task<object>)invocationHandler.Invoke(instance, args);
+                        await result;
+                    }
 					else
 						throw new MessageException(new MissingMethodException(className, operation));
 				}
@@ -90,7 +92,7 @@ namespace SolidSoft.AMFCore.Remoting
 			else
 				throw new MessageException( new TypeInitializationException(className, null) );
 
-            return result;
+            return result.Result;
 		}
 	}
 }

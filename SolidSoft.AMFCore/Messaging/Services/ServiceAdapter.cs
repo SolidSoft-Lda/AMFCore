@@ -1,4 +1,5 @@
-﻿using SolidSoft.AMFCore.Messaging.Config;
+﻿using System.Threading.Tasks;
+using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
 
 namespace SolidSoft.AMFCore.Messaging.Services
@@ -27,9 +28,9 @@ namespace SolidSoft.AMFCore.Messaging.Services
         /// </summary>
         /// <param name="message">The message sent by the client.</param>
         /// <returns>The body of the acknowledge message (or null if there is no body).</returns>
-        public virtual object Invoke(IMessage message)
+        public virtual Task<object> Invoke(IMessage message)
         {
-            return null;
+            return Task.FromResult<object>(null);
         }
         /// <summary>
         /// Gets whether the adapter performs custom subscription management. The default return value is false.

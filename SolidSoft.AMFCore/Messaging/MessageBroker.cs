@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections;
 using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Services;
 using SolidSoft.AMFCore.Messaging.Endpoints;
 using SolidSoft.AMFCore.Messaging.Messages;
-using SolidSoft.AMFCore.Context;
 using SolidSoft.AMFCore.Exceptions;
 using SolidSoft.AMFCore.Util;
 
@@ -312,7 +312,7 @@ namespace SolidSoft.AMFCore.Messaging
 		/// </summary>
 		/// <param name="message">The message to be routed to a service.</param>
 		/// <returns>The result of the message routing.</returns>
-		public IMessage RouteMessage(IMessage message)
+		public Task<IMessage> RouteMessage(IMessage message)
 		{
 			return RouteMessage(message, null);
 		}
@@ -326,17 +326,17 @@ namespace SolidSoft.AMFCore.Messaging
 		/// <param name="message">The message to be routed to a service.</param>
 		/// <param name="endpoint">This can identify the endpoint that is sending the message but it is currently not used so you may pass in null.</param>
         /// <returns>The result of the message routing.</returns>
-		internal IMessage RouteMessage(IMessage message, IEndpoint endpoint)
-		{
-			IService service = null;
-			object result = null;
-			IMessage responseMessage = null;
+        internal async Task<IMessage> RouteMessage(IMessage message, IEndpoint endpoint)
+        {
+            IService service = null;
+            object result = null;
+            Task<IMessage> responseMessage = null;
 
-			CommandMessage commandMessage = message as CommandMessage;
+            CommandMessage commandMessage = message as CommandMessage;
             if (commandMessage != null && commandMessage.operation == CommandMessage.ClientPingOperation)
             {
-                responseMessage = new AcknowledgeMessage();
-                responseMessage.body = true;
+                responseMessage = Task.FromResult<IMessage>(new AcknowledgeMessage());
+                responseMessage.Result.body = true;
             }
             else
             {
@@ -346,7 +346,9 @@ namespace SolidSoft.AMFCore.Messaging
                 {
                     try
                     {
-                        result = service.ServiceMessage(message);
+                        Task<object> task = service.ServiceMessage(message);
+                        await task;
+                        result = task.Result;
                     }
                     catch (Exception exception)
                     {
@@ -360,26 +362,26 @@ namespace SolidSoft.AMFCore.Messaging
                 }
                 if (!(result is IMessage))
                 {
-                    responseMessage = new AcknowledgeMessage();
-                    responseMessage.body = result;
+                    responseMessage = Task.FromResult<IMessage>(new AcknowledgeMessage());
+                    responseMessage.Result.body = result;
                 }
                 else
-                    responseMessage = result as IMessage;
+                    responseMessage = result as Task<IMessage>;
             }
 
-			if( responseMessage is AsyncMessage )
-			{
-				((AsyncMessage)responseMessage).correlationId = message.messageId;
-			}
-			responseMessage.destination = message.destination;
-			responseMessage.clientId = message.clientId;
+            if (responseMessage.Result is AsyncMessage)
+            {
+                ((AsyncMessage)responseMessage.Result).correlationId = message.messageId;
+            }
+            responseMessage.Result.destination = message.destination;
+            responseMessage.Result.clientId = message.clientId;
             //The only case when we do not have context should be when the server side initiates a push
-            if(Context.AMFContext.Current != null && Context.AMFContext.Current.Client != null )
-                responseMessage.SetHeader(MessageBase.FlexClientIdHeader, Context.AMFContext.Current.Client.Id);
-			return responseMessage;
-		}
+            if (Context.AMFContext.Current != null && Context.AMFContext.Current.Client != null)
+                responseMessage.Result.SetHeader(MessageBase.FlexClientIdHeader, Context.AMFContext.Current.Client.Id);
+            return responseMessage.Result;
+        }
 
-		internal IService GetService(IMessage message)
+        internal IService GetService(IMessage message)
 		{
 			IService service = GetServiceByDestinationId(message.destination);
 			if( service == null )

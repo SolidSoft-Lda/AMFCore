@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -118,11 +119,12 @@ namespace SolidSoft.AMFCore
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        public void PreRequest()
+
+        public async Task PreRequest(object context)
         {
             if (DependencyInjection.HttpContextManager.HttpContext.GetContentType() == ContentType.AMF)
             {
-                DependencyInjection.HttpContextManager.HttpContext.Clear();
+                DependencyInjection.HttpContextManager.HttpContext.Clear(context);
                 DependencyInjection.HttpContextManager.HttpContext.SetContentType(ContentType.AMF);
 
                 try
@@ -130,14 +132,14 @@ namespace SolidSoft.AMFCore
                     AMFWebContext.Initialize();
 
                     if (messageServer != null)
-                        messageServer.Service();
+                        await messageServer.Service();
 
-                    DependencyInjection.HttpContextManager.HttpContext.Finish();
+                    DependencyInjection.HttpContextManager.HttpContext.Finish(context);
                 }
                 catch (Exception)
                 {
-                    DependencyInjection.HttpContextManager.HttpContext.Clear();
-                    DependencyInjection.HttpContextManager.HttpContext.Finish();
+                    DependencyInjection.HttpContextManager.HttpContext.Clear(context);
+                    DependencyInjection.HttpContextManager.HttpContext.Finish(context);
                 }
             }
         }

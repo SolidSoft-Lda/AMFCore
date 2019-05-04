@@ -1,4 +1,5 @@
-﻿using SolidSoft.AMFCore.Messaging.Messages;
+﻿using System.Threading.Tasks;
+using SolidSoft.AMFCore.Messaging.Messages;
 
 namespace SolidSoft.AMFCore.Messaging.Services
 {
@@ -27,12 +28,12 @@ namespace SolidSoft.AMFCore.Messaging.Services
 		/// <returns>The requested Destination.</returns>
         
         Destination GetDestination(IMessage message);
-		/// <summary>
-		/// Handles a message routed to the service by the MessageBroker.
-		/// </summary>
-		/// <param name="message">The message sent by the MessageBroker.</param>
-		/// <returns></returns>
-		object ServiceMessage(IMessage message);
+        /// <summary>
+        /// Handles a message routed to the service by the MessageBroker.
+        /// </summary>
+        /// <param name="message">The message sent by the MessageBroker.</param>
+        /// <returns></returns>
+        Task<object> ServiceMessage(IMessage message);
 		/// <summary>
 		/// Determines whether this Service is capable of handling a given Message instance.
 		/// </summary>

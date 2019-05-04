@@ -1,4 +1,5 @@
-﻿using SolidSoft.AMFCore.Messaging.Config;
+﻿using System.Threading.Tasks;
+using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
 
 namespace SolidSoft.AMFCore.Messaging.Endpoints
@@ -47,13 +48,13 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints
         /// <summary>
         /// This method supports the AMFCore infrastructure and is not intended to be used directly from your code.
         /// </summary>
-		void Service();
+        Task Service();
         /// <summary>
         /// This method supports the AMFCore infrastructure and is not intended to be used directly from your code.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-		IMessage ServiceMessage(IMessage message);
+		Task<IMessage> ServiceMessage(IMessage message);
         /// <summary>
         /// Specifies whether this protocol requires the secure HTTPS protocol.
         /// </summary>

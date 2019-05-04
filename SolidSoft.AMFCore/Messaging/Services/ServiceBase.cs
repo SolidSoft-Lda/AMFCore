@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections;
 using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
@@ -146,12 +147,12 @@ namespace SolidSoft.AMFCore.Messaging.Services
         /// </summary>
         /// <param name="message">The message that should be handled by the service.</param>
         /// <returns>The result of the message processing.</returns>
-		public virtual object ServiceMessage(IMessage message)
+		public virtual Task<object> ServiceMessage(IMessage message)
 		{
 			CommandMessage commandMessage = message as CommandMessage;
 			if( commandMessage != null && commandMessage.operation == CommandMessage.ClientPingOperation )
-				return true;
-			throw new NotSupportedException();
+				return Task.FromResult<object>(true);
+            throw new NotSupportedException();
 		}
         /// <summary>
         /// Returns whether this Service is capable of handling the given Message instance.

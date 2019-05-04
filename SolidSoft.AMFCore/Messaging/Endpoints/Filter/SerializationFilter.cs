@@ -1,4 +1,5 @@
-﻿using SolidSoft.AMFCore.IO;
+﻿using System.Threading.Tasks;
+using SolidSoft.AMFCore.IO;
 
 namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 {
@@ -23,13 +24,14 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints.Filter
 
 		#region IFilter Members
 
-		public override void Invoke(AMFContext context)
-		{            
+        public override Task Invoke(AMFContext context)
+        {
 			AMFSerializer serializer = new AMFSerializer(context.OutputStream);
 			serializer.UseLegacyCollection = _useLegacyCollection;
 			serializer.WriteMessage(context.MessageOutput);
 			serializer.Flush();
-		}
+            return Task.FromResult<object>(null);
+        }
 
 		#endregion
 	}

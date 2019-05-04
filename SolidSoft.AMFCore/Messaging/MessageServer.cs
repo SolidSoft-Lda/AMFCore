@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Endpoints;
 using SolidSoft.AMFCore.Messaging.Services;
@@ -130,7 +131,7 @@ namespace SolidSoft.AMFCore.Messaging
         /// <summary>
         /// This method supports the AMFCore infrastructure and is not intended to be used directly from your code.
         /// </summary>
-		public void Service()
+		public async Task Service()
 		{
 			if( _messageBroker == null )
 			{
@@ -147,7 +148,7 @@ namespace SolidSoft.AMFCore.Messaging
             IEndpoint endpoint = _messageBroker.GetEndpoint(endpointPath, contextPath, isSecure);
 			if( endpoint != null )
 			{
-				endpoint.Service();
+				await endpoint.Service();
 			}
 			else
 			{

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace SolidSoft.AMFCore.Invocation
 {
@@ -18,9 +20,19 @@ namespace SolidSoft.AMFCore.Invocation
 			_methodInfo = methodInfo;
 		}
 
-		public object Invoke(object obj, object[] arguments)
-		{
-			object result = _methodInfo.Invoke( obj, arguments );
+        public async Task<object> Invoke(object obj, object[] arguments)
+        {
+            object result = null;
+            if (_methodInfo.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) == null)
+            {
+                result = _methodInfo.Invoke(obj, arguments);
+            }
+            else
+            {
+                Task task = (Task)_methodInfo.Invoke(obj, arguments);
+                await task;
+                result = task.GetType().GetProperty("Result").GetValue(task);
+            }
 
 			object[] attributes = _methodInfo.GetCustomAttributes( false );
 			if( attributes != null && attributes.Length > 0 )

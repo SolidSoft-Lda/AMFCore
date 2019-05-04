@@ -1,4 +1,4 @@
-﻿using SolidSoft.AMFCore.Context;
+﻿using System.Threading.Tasks;
 using SolidSoft.AMFCore.Configuration;
 using SolidSoft.AMFCore.Messaging.Config;
 using SolidSoft.AMFCore.Messaging.Messages;
@@ -55,13 +55,13 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints
 			base.Stop();
 		}
 
-		public override void Service()
-		{
+        public override async Task Service()
+        {
             AMFContext amfContext = new AMFContext(HttpContextManager.HttpContext.GetInputStream(), HttpContextManager.HttpContext.GetOutputStream());
-			_filterChain.InvokeFilters(amfContext);
-		}
+            await _filterChain.InvokeFilters(amfContext);
+        }
 
-        public override IMessage ServiceMessage(IMessage message)
+        public override Task<IMessage> ServiceMessage(IMessage message)
         {
             if (message is CommandMessage)
             {
@@ -100,12 +100,12 @@ namespace SolidSoft.AMFCore.Messaging.Endpoints
                             _waitingPollRequests.Decrement();
 
                             if (messages == null || messages.Length == 0)
-                                return new AcknowledgeMessage();
+                                return Task.FromResult<IMessage>(new AcknowledgeMessage());
                             else
                             {
-                                CommandMessage resultMessage = new CommandMessage();
-                                resultMessage.operation = CommandMessage.ClientSyncOperation;
-                                resultMessage.body = messages;
+                                Task<IMessage> resultMessage = Task.FromResult<IMessage>(new CommandMessage());
+                                (resultMessage.Result as CommandMessage).operation = CommandMessage.ClientSyncOperation;
+                                (resultMessage.Result as CommandMessage).body = messages;
                                 return resultMessage;
                             }
                         }
