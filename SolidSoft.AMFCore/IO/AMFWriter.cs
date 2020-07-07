@@ -631,8 +631,8 @@ namespace SolidSoft.AMFCore.IO
 				}
 			}
             if (data is byte[])
-                data = System.Convert.ToBase64String(data as byte[]);
-            else if (data is DateTime || data is DateTime?)
+                data = Convert.ToBase64String(data as byte[]);
+            else if (AMFGateway.ReturnsDateTimeAsDateString && (data is DateTime || data is DateTime?))
                 data = ((DateTime)data).ToString("yyyy-MM-dd");
             else if (data is TimeSpan || data is TimeSpan?)
                 data = Util.Convert.ToString(data);

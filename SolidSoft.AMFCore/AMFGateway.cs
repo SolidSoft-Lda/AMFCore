@@ -160,5 +160,11 @@ namespace SolidSoft.AMFCore
 		}
 
 		#endregion kb911816
+
+        public static bool ReturnsDateTimeAsDateString
+        {
+            get;
+            set;
+        }
 	}
 }
