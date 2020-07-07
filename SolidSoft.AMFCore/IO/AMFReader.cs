@@ -502,7 +502,7 @@ namespace SolidSoft.AMFCore.IO
 			if( inline )
 			{
 				double milliseconds = this.ReadDouble();
-				DateTime start = new DateTime(1970, 1, 1, 0, 0, 0);
+				DateTime start = new DateTime(1970, 1, 1, 1, 0, 0);
 
 				DateTime date = start.AddMilliseconds(milliseconds);
                 date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
