@@ -150,7 +150,7 @@ namespace SolidSoft.AMFCore.Messaging.Services
 		public virtual Task<object> ServiceMessage(IMessage message)
 		{
 			CommandMessage commandMessage = message as CommandMessage;
-			if( commandMessage != null && commandMessage.operation == CommandMessage.ClientPingOperation )
+			if( commandMessage != null && (commandMessage.operation == CommandMessage.RoyalePingOperation || commandMessage.operation == CommandMessage.FlexPingOperation))
 				return Task.FromResult<object>(true);
             throw new NotSupportedException();
 		}

@@ -12,9 +12,13 @@
         /// </summary>
 		public const string AuthenticationMessageRefType = "flex.messaging.messages.AuthenticationMessage";
 		/// <summary>
-		/// This operation is used to test connectivity over the current channel to the remote endpoint.
+		/// This operation is used to test connectivity over the current channel to the remote endpoint (Flex client).
 		/// </summary>
-		public const int ClientPingOperation = 5;
+		public const int FlexPingOperation = 5;
+		/// <summary>
+		/// This operation is used to test connectivity over the current channel to the remote endpoint (Royale client).
+		/// </summary>
+		public const int RoyalePingOperation = 13;
 		/// <summary>
 		/// This operation is used to subscribe to a remote destination.
 		/// </summary>

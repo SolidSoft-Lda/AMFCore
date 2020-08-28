@@ -333,7 +333,7 @@ namespace SolidSoft.AMFCore.Messaging
             Task<IMessage> responseMessage = null;
 
             CommandMessage commandMessage = message as CommandMessage;
-            if (commandMessage != null && commandMessage.operation == CommandMessage.ClientPingOperation)
+            if (commandMessage != null && (commandMessage.operation == CommandMessage.RoyalePingOperation || commandMessage.operation == CommandMessage.FlexPingOperation))
             {
                 responseMessage = Task.FromResult<IMessage>(new AcknowledgeMessage());
                 responseMessage.Result.body = true;
