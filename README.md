@@ -248,6 +248,75 @@ namespace Controllers
 
 ```
 
+## Example Usage With ASP.NET Core in .NET 5
+
+```csharp
+
+Startup.cs:
+
+public class Startup
+{
+    private static SolidSoft.AMFCore.AMFGateway amfGateway = null;
+
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+
+        amfGateway = new SolidSoft.AMFCore.AMFGateway();
+        amfGateway.Init();
+    }
+    
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddHttpContextAccessor();
+        services.AddControllers();
+
+        //if using Kestrel
+        services.Configure<KestrelServerOptions>(options =>
+        {
+            options.AllowSynchronousIO = true;
+        });
+
+        //if using IIS
+        services.Configure<IISServerOptions>(options =>
+        {
+            options.AllowSynchronousIO = true;
+        });
+    }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.Use(async (context, next) =>
+        {
+            SolidSoft.AMFCore.DependencyInjection.HttpContextManager.Initialize(
+                context.Request.PathBase,
+                context.Request.IsHttps,
+                new MyHttpContext());
+            await next();
+        });
+
+        MyHttpContextAccessor.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+
+        app.Map("/gateway", handleAMFGateway);
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+
+    private static void handleAMFGateway(IApplicationBuilder app)
+    {
+        app.Run(async context =>
+        {
+            await amfGateway.PreRequest(MyHttpContextAccessor.Current);
+        });
+    }
+}
+```
+
 ## Example Usage of AMF Service
 
 ```csharp
