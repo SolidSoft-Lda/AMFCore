@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using SolidSoft.AMFCore.Invocation;
 using SolidSoft.AMFCore.Messaging.Services;
@@ -14,6 +15,8 @@ namespace SolidSoft.AMFCore.Remoting
 	/// </summary>
 	public class RemotingAdapter : ServiceAdapter
 	{
+		private static Dictionary<string, object> cacheService = new Dictionary<string, object>();
+
 		public RemotingAdapter()
 		{
 		}
@@ -44,11 +47,20 @@ namespace SolidSoft.AMFCore.Remoting
             string source = className + "." + operation;
 			IList parameterList = remotingMessage.body as IList;
 
-			FactoryInstance factoryInstance = this.Destination.GetFactoryInstance();
-			factoryInstance.Source = className;
-			object instance = factoryInstance.Lookup();
+			object instance = null;
+			if (cacheService.ContainsKey(className))
+			{
+				instance = cacheService[className];
+			}
+			else
+			{
+				FactoryInstance factoryInstance = this.Destination.GetFactoryInstance();
+				factoryInstance.Source = className;
+				instance = factoryInstance.Lookup();
+				cacheService.Add(className, instance);
+			}
 
-			if( instance != null )
+			if ( instance != null )
 			{
 				Type type = instance.GetType();
                 bool isAccessible = TypeHelper.GetTypeIsAccessible(type);
