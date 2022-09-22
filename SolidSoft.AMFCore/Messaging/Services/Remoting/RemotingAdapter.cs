@@ -57,7 +57,7 @@ namespace SolidSoft.AMFCore.Remoting
 				FactoryInstance factoryInstance = this.Destination.GetFactoryInstance();
 				factoryInstance.Source = className;
 				instance = factoryInstance.Lookup();
-				cacheService.Add(className, instance);
+				cacheService.Add(instance.ToString(), instance);
 			}
 
 			if ( instance != null )
