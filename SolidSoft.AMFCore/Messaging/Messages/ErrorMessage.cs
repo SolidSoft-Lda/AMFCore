@@ -24,6 +24,7 @@ namespace SolidSoft.AMFCore.Messaging.Messages
 		string _faultDetail;
 		object _rootCause;
 		ASObject _extendedData;
+		string _message;
 
 		/// <summary>
 		/// Initializes a new instance of the ErrorMessage class.
@@ -73,6 +74,14 @@ namespace SolidSoft.AMFCore.Messaging.Messages
 		{
 			get{ return _extendedData; }
 			set{ _extendedData = value; }
+		}
+		/// <summary>
+		/// Message alias for faultString (for compatibility with Royale client)
+		/// </summary>
+		public string message
+		{
+			get{ return _message ?? _faultString; }
+			set{ _message = value; }
 		}
 
 		internal static ErrorMessage GetErrorMessage(IMessage message, Exception exception)

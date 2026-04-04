@@ -366,7 +366,7 @@ namespace SolidSoft.AMFCore.Messaging
                     responseMessage.Result.body = result;
                 }
                 else
-                    responseMessage = result as Task<IMessage>;
+                    responseMessage = Task.FromResult<IMessage>(result as IMessage);
             }
 
             if (responseMessage.Result is AsyncMessage)
