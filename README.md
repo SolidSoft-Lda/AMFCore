@@ -1,3 +1,9 @@
+# Note from the maintainer
+AMFCore is a very solid piece of software engineering and has rarely been updated for exactly that reason.
+We have used it in other projects as well.
+We moved to other communication technologies, so it fulfilled its purpose. We no longer need it, and it will not receive any further updates.
+You can fork it if you want.
+
 # AMFCore
 AMF protocol for .NET Standard 2.0
 
